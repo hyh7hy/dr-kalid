@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DR Khalid — Clinical Image Library</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#087F8C"/><path d="M17 9h6v8h8v6h-8v8h-6v-8H9v-6h8z" fill="#fff"/></svg>
+      <div><h1>DR Khalid</h1><p>Clinical Image Library</p></div>
+    </div>
+    <div class="actions">
+      <span class="store" id="storeInfo">Calculating storage…</span>
+      <button class="btn ghost" id="exportBtn" type="button">Export backup</button>
+      <button class="btn ghost" id="importBtn" type="button">Import backup</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+      <button class="btn primary" id="uploadBtn" type="button">Upload images</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="banner" role="alert" hidden></div>
+
+  <section class="cards" aria-label="Summary">
+    <div class="card stat"><span>Total saved images</span><strong id="sTotal">0</strong></div>
+    <div class="card stat"><span>Added in the last 7 days</span><strong id="sRecent">0</strong></div>
+    <div class="card stat"><span>Storage used by library</span><strong id="sSize">0 KB</strong></div>
+  </section>
+
+  <section class="tools">
+    <div class="search">
+      <label for="q" class="sr">Search images by title</label>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="q" type="search" placeholder="Search images by title…" autocomplete="off">
+      <button class="clear" id="clearQ" type="button" hidden>Clear</button>
+    </div>
+    <div class="sort">
+      <label for="sort">Sort</label>
+      <select id="sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">Alphabetical</option></select>
+    </div>
+  </section>
+  <p class="count" id="count" aria-live="polite"></p>
+
+  <div class="loading" id="loading"><span class="spin"></span>Loading library…</div>
+  <section class="grid" id="grid" aria-label="Saved images"></section>
+
+  <section class="empty" id="emptyAll" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg>
+    <h2>No images saved yet</h2>
+    <p>Upload your first screenshot to start building your clinical image library.</p>
+    <button class="btn primary" id="uploadBtn2" type="button">Upload image</button>
+  </section>
+  <section class="empty" id="emptySearch" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <h2>No matching images found</h2>
+    <p>Try searching with a different title.</p>
+  </section>
+</main>
+
+<footer class="wrap foot">Images are stored in this browser only. Browser storage is not guaranteed to be permanent — export a backup regularly.</footer>
+
+<!-- Upload -->
+<dialog id="upDlg" class="dlg wide" aria-labelledby="upTitle">
+  <h2 id="upTitle">Upload images</h2>
+  <div class="drop" id="drop" role="button" tabindex="0" aria-label="Drop images here or press Enter to browse">
+    <p><strong>Drag and drop images here</strong></p>
+    <p class="muted">PNG, JPG, JPEG or WebP · up to 25 MB each</p>
+    <button class="btn ghost" id="browse" type="button">Browse files</button>
+    <input type="file" id="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+  </div>
+  <ul class="pend" id="pend"></ul>
+  <div class="row end">
+    <button class="btn ghost" id="upCancel" type="button">Cancel</button>
+    <button class="btn primary" id="upSave" type="button" disabled>Save image</button>
+  </div>
+</dialog>
+
+<!-- Rename -->
+<dialog id="edDlg" class="dlg" aria-labelledby="edT">
+  <form id="edForm">
+    <h2 id="edT">Edit title</h2>
+    <label for="edIn" class="sr">Image title</label>
+    <input id="edIn" class="field" maxlength="200" required>
+    <div class="row end"><button class="btn ghost" type="button" id="edCancel">Cancel</button><button class="btn primary" type="submit">Save title</button></div>
+  </form>
+</dialog>
+
+<!-- Delete -->
+<dialog id="delDlg" class="dlg" aria-labelledby="delT">
+  <h2 id="delT">Delete this image?</h2>
+  <p id="delMsg" class="muted"></p>
+  <div class="row end"><button class="btn ghost" type="button" id="delCancel">Cancel</button><button class="btn danger" type="button" id="delOk">Delete image</button></div>
+</dialog>
+
+<!-- Viewer -->
+<dialog id="vwDlg" class="viewer" aria-labelledby="vwT">
+  <div class="vbar">
+    <h2 id="vwT"></h2>
+    <div class="vtools">
+      <button class="btn dark" id="zOut" type="button" aria-label="Zoom out">−</button>
+      <span id="zLbl" aria-live="polite">100%</span>
+      <button class="btn dark" id="zIn" type="button" aria-label="Zoom in">+</button>
+      <button class="btn dark" id="zFit" type="button">Fit to screen</button>
+      <button class="btn dark" id="vDl" type="button">Download</button>
+      <button class="btn dark" id="vClose" type="button">Close</button>
+    </div>
+  </div>
+  <div class="stage" id="stage"><img id="vImg" alt=""></div>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="script.js"></script>
+</body>
+</html>
